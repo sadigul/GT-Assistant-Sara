@@ -63,7 +63,7 @@ export default function SaraLoginScreen({
             email: cleanEmail,
             fullName: matchedStaff?.fullName || cleanEmail.split("@")[0],
             role: "sales_manager",
-            roleTitle: matchedStaff?.roleTitle || "Sales Manager",
+            jobTitle: matchedStaff?.roleTitle || "Sales Manager",
             department: "Operations",
             avatar_url: cleanEmail === "sadigulx05@gmail.com" ? "/saad-avatar.jpg" : undefined,
           });
