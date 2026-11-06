@@ -9,12 +9,16 @@ function getEnv(name: string): string {
   return process.env[name] || "";
 }
 
-const supabaseUrl = getEnv("NEXT_PUBLIC_SUPABASE_URL");
-const supabaseServiceKey = getEnv("SUPABASE_SERVICE_ROLE_KEY") || getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
+const rawSupabaseUrl = getEnv("NEXT_PUBLIC_SUPABASE_URL");
+const rawSupabaseServiceKey =
+  getEnv("SUPABASE_SERVICE_ROLE_KEY") || getEnv("NEXT_PUBLIC_SUPABASE_ANON_KEY");
 
-if (!supabaseUrl || !supabaseServiceKey) {
+if (!rawSupabaseUrl || !rawSupabaseServiceKey) {
   console.warn("⚠️ [SARA Supabase] Missing Supabase environment variables in GT Assistant.");
 }
+
+const supabaseUrl = rawSupabaseUrl || "https://placeholder.supabase.co";
+const supabaseServiceKey = rawSupabaseServiceKey || "placeholder-service-key";
 
 const resilientFetch: typeof fetch = async (input, init) => {
   let lastErr: any;
