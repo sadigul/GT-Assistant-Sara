@@ -58,10 +58,12 @@ export default function SaraLoginScreen({
         };
         const matchedStaff = fallbackStaffMap[cleanEmail];
         if (!data && (matchedStaff || cleanEmail.endsWith("@goldtouchds.com"))) {
+          const resolvedName = matchedStaff?.fullName || cleanEmail.split("@")[0];
           onAuthenticated({
             id: `staff-${cleanEmail}`,
+            name: resolvedName,
             email: cleanEmail,
-            fullName: matchedStaff?.fullName || cleanEmail.split("@")[0],
+            fullName: resolvedName,
             role: "sales_manager",
             jobTitle: matchedStaff?.roleTitle || "Sales Manager",
             department: "Operations",
