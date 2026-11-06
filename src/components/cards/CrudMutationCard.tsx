@@ -188,6 +188,15 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
     setErrorMsg(null);
   };
 
+  const safeParseJson = async (res: Response) => {
+    const raw = await res.text();
+    try {
+      return raw ? JSON.parse(raw) : {};
+    } catch {
+      return { success: false, error: "Temporary server delay. Please try again." };
+    }
+  };
+
   const handleCreateSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsBusy(true);
@@ -202,14 +211,14 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
           fields: draftFields,
         }),
       });
-      const data = await res.json();
+      const data = await safeParseJson(res);
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || "Failed to create record");
       } else {
         updateLocalMutation(data.mutation);
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Network error");
+    } catch {
+      setErrorMsg("Unable to reach server. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -230,15 +239,15 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
           updates: editFields,
         }),
       });
-      const data = await res.json();
+      const data = await safeParseJson(res);
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || "Failed to update record");
       } else {
         setIsEditingInline(false);
         updateLocalMutation(data.mutation);
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Network error");
+    } catch {
+      setErrorMsg("Unable to reach server. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -257,15 +266,15 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
           identifier: mutation.recordId,
         }),
       });
-      const data = await res.json();
+      const data = await safeParseJson(res);
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || "Failed to prepare deletion");
       } else {
         setIsEditingInline(false);
         updateLocalMutation(data.mutation);
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Network error");
+    } catch {
+      setErrorMsg("Unable to reach server. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -283,14 +292,14 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
           mutation,
         }),
       });
-      const data = await res.json();
+      const data = await safeParseJson(res);
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || "Failed to delete record");
       } else {
         updateLocalMutation(data.mutation);
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Network error");
+    } catch {
+      setErrorMsg("Unable to reach server. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -320,15 +329,15 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
           mutation,
         }),
       });
-      const data = await res.json();
+      const data = await safeParseJson(res);
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || "Failed to undo change");
       } else {
         setIsEditingInline(false);
         updateLocalMutation(data.mutation);
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Network error");
+    } catch {
+      setErrorMsg("Unable to reach server. Please try again.");
     } finally {
       setIsBusy(false);
     }
@@ -346,14 +355,14 @@ export const CrudMutationCard: React.FC<CrudMutationCardProps> = ({
           mutation,
         }),
       });
-      const data = await res.json();
+      const data = await safeParseJson(res);
       if (!res.ok || !data.success) {
         setErrorMsg(data.error || "Failed to redo change");
       } else {
         updateLocalMutation(data.mutation);
       }
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Network error");
+    } catch {
+      setErrorMsg("Unable to reach server. Please try again.");
     } finally {
       setIsBusy(false);
     }
