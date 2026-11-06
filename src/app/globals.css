@@ -1,0 +1,720 @@
+@import "tailwindcss";
+@import "leaflet/dist/leaflet.css";
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root,
+html[data-theme="light"] {
+  --background: #ffffff;
+  --foreground: #0f172a;
+  --sidebar-bg: #f8fafc;
+  --input-bg: #ffffff;
+  --hover-bg: #f1f5f9;
+}
+
+html[data-theme="ivory"] {
+  --background: #faf7f0;
+  --foreground: #1c1917;
+  --sidebar-bg: #f3ede0;
+  --input-bg: #fffdf9;
+  --hover-bg: #efe8d8;
+}
+
+html[data-theme="dark"] {
+  --background: #0a0a0c;
+  --foreground: #f4f4f5;
+  --sidebar-bg: #111216;
+  --input-bg: #1c1d22;
+  --hover-bg: #22232a;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: "Google Sans", "Google Sans Text", var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "Google Sans Mono", var(--font-geist-mono), monospace;
+}
+
+::selection {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+html[data-theme="dark"] ::selection {
+  background: rgba(245, 158, 11, 0.3);
+  color: #fde68a;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: "Google Sans", "Google Sans Text", var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+/* Prevent browser autofill from painting a mismatched blue box inside inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #09090b !important;
+  caret-color: #09090b !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+html[data-theme="dark"] input:-webkit-autofill,
+html[data-theme="dark"] input:-webkit-autofill:hover,
+html[data-theme="dark"] input:-webkit-autofill:focus,
+html[data-theme="dark"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #18191f inset !important;
+  -webkit-text-fill-color: #f4f4f5 !important;
+  caret-color: #f4f4f5 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+html[data-theme="ivory"] input:-webkit-autofill,
+html[data-theme="ivory"] input:-webkit-autofill:hover,
+html[data-theme="ivory"] input:-webkit-autofill:focus,
+html[data-theme="ivory"] input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #fffdf8 inset !important;
+  -webkit-text-fill-color: #1c1917 !important;
+  caret-color: #1c1917 !important;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Warm Ivory Theme Overrides */
+html[data-theme="ivory"] .sara-app-canvas,
+html[data-theme="ivory"] .sara-chat-stream {
+  background-color: #faf7f0 !important;
+  color: #1c1917 !important;
+}
+html[data-theme="ivory"] .sara-input-dock {
+  background: linear-gradient(to top, #faf7f0 0%, rgba(250, 247, 240, 0.95) 60%, transparent 100%) !important;
+}
+html[data-theme="ivory"] .bg-white,
+html[data-theme="ivory"] .bg-white\/95 {
+  background-color: #fffdf8 !important;
+}
+html[data-theme="ivory"] .sara-modal-surface,
+html[data-theme="ivory"] .sara-card-surface {
+  background-color: #fffdf8 !important;
+}
+html[data-theme="ivory"] .sara-assistant-bubble {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+html[data-theme="ivory"] .bg-slate-50,
+html[data-theme="ivory"] .bg-slate-50\/80,
+html[data-theme="ivory"] .bg-slate-50\/70,
+html[data-theme="ivory"] .bg-slate-50\/60,
+html[data-theme="ivory"] .bg-slate-50\/50,
+html[data-theme="ivory"] .bg-slate-50\/40 {
+  background-color: #f3ede1 !important;
+}
+html[data-theme="ivory"] .border-slate-200,
+html[data-theme="ivory"] .border-slate-200\/80,
+html[data-theme="ivory"] .border-slate-200\/90,
+html[data-theme="ivory"] .border-slate-200\/60,
+html[data-theme="ivory"] .border-slate-100 {
+  border-color: #e6decb !important;
+}
+
+/* Ambient Radial Orange Glow for Centered Welcome Screen */
+.sara-hero-orb-outer {
+  background: radial-gradient(
+    ellipse at 52% 48%,
+    rgba(249, 115, 22, 0.14) 0%,
+    rgba(234, 88, 12, 0.08) 42%,
+    rgba(245, 158, 11, 0.03) 66%,
+    transparent 85%
+  );
+  filter: blur(72px);
+  transform: translateZ(0);
+}
+.sara-hero-orb-inner {
+  background: radial-gradient(
+    circle at 52% 48%,
+    rgba(234, 88, 12, 0.11) 0%,
+    rgba(249, 115, 22, 0.04) 50%,
+    transparent 80%
+  );
+  filter: blur(56px);
+  transform: translateZ(0);
+}
+
+html[data-theme="dark"] .sara-hero-orb-outer {
+  background: radial-gradient(
+    ellipse at 53% 48%,
+    rgba(215, 82, 14, 0.40) 0%,
+    rgba(176, 63, 10, 0.26) 28%,
+    rgba(128, 44, 8, 0.15) 48%,
+    rgba(78, 27, 6, 0.06) 66%,
+    rgba(10, 10, 12, 0) 88%
+  );
+  filter: blur(84px);
+  transform: translateZ(0);
+}
+html[data-theme="dark"] .sara-hero-orb-inner {
+  background: radial-gradient(
+    circle at 52% 48%,
+    rgba(249, 115, 22, 0.28) 0%,
+    rgba(217, 78, 14, 0.15) 42%,
+    rgba(146, 50, 10, 0.05) 68%,
+    rgba(10, 10, 12, 0) 90%
+  );
+  filter: blur(64px);
+  transform: translateZ(0);
+}
+
+/* ==========================================================================
+   Midnight Slate (Dark Theme) Luxury Multi-Tier Surface & Contrast System
+   ========================================================================== */
+
+/* 1. Core App Canvas, Header & Input Dock */
+html[data-theme="dark"] .sara-app-canvas,
+html[data-theme="dark"] .sara-chat-stream {
+  background-color: #0a0a0c !important;
+}
+
+html[data-theme="dark"] .sara-input-dock {
+  background-color: transparent !important;
+}
+
+/* 2. Elevated Surfaces (Assistant Bubbles & Nested ERP Cards Only) */
+html[data-theme="dark"] .sara-assistant-bubble {
+  background-color: transparent !important;
+  border-color: transparent !important;
+}
+
+/* Cards nested inside assistant bubbles get a sleek neutral carbon-zinc surface */
+html[data-theme="dark"] .sara-assistant-bubble .bg-white,
+html[data-theme="dark"] .sara-assistant-bubble .bg-white\/95 {
+  background-color: #14151a !important;
+}
+
+/* Studio product thumbnails always keep a crisp white studio background */
+.sara-product-thumb,
+html[data-theme="dark"] .sara-product-thumb,
+html[data-theme="dark"] .sara-assistant-bubble .sara-product-thumb,
+html[data-theme="ivory"] .sara-product-thumb,
+html[data-theme="ivory"] .sara-assistant-bubble .sara-product-thumb {
+  background-color: #ffffff !important;
+}
+
+html[data-theme="dark"] .sara-user-bubble {
+  background-color: #22232b !important;
+  color: #f4f4f5 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+
+html[data-theme="dark"] .sara-modal-surface {
+  background-color: #14151a !important;
+  border-color: rgba(255, 255, 255, 0.09) !important;
+  color: #f4f4f5 !important;
+}
+
+/* 3. Secondary & Recessed Neutral Dark Surfaces (Including Opacity Modifiers) */
+html[data-theme="dark"] .bg-slate-50,
+html[data-theme="dark"] .bg-slate-50\/80,
+html[data-theme="dark"] .bg-slate-50\/70,
+html[data-theme="dark"] .bg-slate-50\/60,
+html[data-theme="dark"] .bg-slate-50\/50,
+html[data-theme="dark"] .bg-slate-50\/40 {
+  background-color: #181920 !important;
+}
+
+html[data-theme="dark"] .bg-slate-100,
+html[data-theme="dark"] .bg-slate-100\/90,
+html[data-theme="dark"] .bg-slate-100\/80,
+html[data-theme="dark"] .bg-slate-100\/70 {
+  background-color: #1f2029 !important;
+}
+
+html[data-theme="dark"] .bg-slate-200,
+html[data-theme="dark"] .bg-slate-200\/70,
+html[data-theme="dark"] .bg-slate-200\/60 {
+  background-color: #272833 !important;
+}
+
+/* 4. Interactive Hover States */
+html[data-theme="dark"] .hover\:bg-slate-50:hover,
+html[data-theme="dark"] .hover\:bg-slate-50\/60:hover,
+html[data-theme="dark"] .hover\:bg-slate-100:hover,
+html[data-theme="dark"] .hover\:bg-slate-200\/60:hover,
+html[data-theme="dark"] .hover\:bg-slate-200\/70:hover {
+  background-color: #252630 !important;
+}
+
+/* 5. Crisp Typography Hierarchy */
+html[data-theme="dark"] .text-slate-950,
+html[data-theme="dark"] .text-slate-900,
+html[data-theme="dark"] .text-slate-800,
+html[data-theme="dark"] .hover\:text-slate-950:hover,
+html[data-theme="dark"] .hover\:text-slate-900:hover,
+html[data-theme="dark"] .hover\:text-slate-800:hover {
+  color: #f4f4f5 !important;
+}
+
+html[data-theme="dark"] .text-slate-700,
+html[data-theme="dark"] .text-slate-600,
+html[data-theme="dark"] .hover\:text-slate-700:hover {
+  color: #d4d4d8 !important;
+}
+
+html[data-theme="dark"] .text-slate-500,
+html[data-theme="dark"] .text-slate-400 {
+  color: #a1a1aa !important;
+}
+
+html[data-theme="dark"] .text-slate-300 {
+  color: #71717a !important;
+}
+
+/* 6. Borders & Dividers */
+html[data-theme="dark"] .border-slate-100 {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+html[data-theme="dark"] .border-slate-200,
+html[data-theme="dark"] .border-slate-200\/90,
+html[data-theme="dark"] .border-slate-200\/80,
+html[data-theme="dark"] .border-slate-200\/70,
+html[data-theme="dark"] .border-slate-200\/60 {
+  border-color: rgba(255, 255, 255, 0.09) !important;
+}
+
+html[data-theme="dark"] .border-slate-300,
+html[data-theme="dark"] .hover\:border-slate-300:hover,
+html[data-theme="dark"] .focus-within\:border-slate-400:focus-within {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+html[data-theme="dark"] .divide-slate-100 > :not([hidden]) ~ :not([hidden]),
+html[data-theme="dark"] .divide-slate-200 > :not([hidden]) ~ :not([hidden]) {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+
+/* 7. Settings Modal Controls, Segmented Pills, Active Tiles & Switches */
+html[data-theme="dark"] .sara-choice-tile {
+  background-color: #162032 !important;
+  border-color: #263449 !important;
+}
+
+html[data-theme="dark"] .sara-choice-tile:hover {
+  background-color: #1c283e !important;
+  border-color: #3b4f6b !important;
+}
+
+html[data-theme="dark"] .sara-choice-tile-active {
+  background-color: rgba(245, 158, 11, 0.1) !important;
+  border-color: #f59e0b !important;
+}
+
+html[data-theme="dark"] .sara-choice-check {
+  background-color: #f59e0b !important;
+  color: #0b0f19 !important;
+}
+
+html[data-theme="dark"] .sara-segmented-track {
+  background-color: #0b101b !important;
+  border-color: #1e293b !important;
+}
+
+html[data-theme="dark"] .sara-segmented-pill-active {
+  background-color: #1e293b !important;
+  border-color: #3b4f6b !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme="dark"] .sara-switch-on {
+  background-color: #f59e0b !important;
+}
+
+html[data-theme="dark"] .sara-switch-on .sara-switch-knob {
+  background-color: #0b0f19 !important;
+}
+
+html[data-theme="dark"] .sara-switch-off {
+  background-color: #263449 !important;
+}
+
+html[data-theme="dark"] .sara-switch-off .sara-switch-knob {
+  background-color: #94a3b8 !important;
+}
+
+html[data-theme="dark"] .sara-primary-btn {
+  background-color: #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+html[data-theme="dark"] .sara-primary-btn:hover {
+  background-color: #ffffff !important;
+  color: #020617 !important;
+}
+
+html[data-theme="dark"] .sara-disabled-btn {
+  background-color: #1e293b !important;
+  color: #475569 !important;
+}
+
+/* 8. Chat Input Box & Product Zoom Viewport */
+html[data-theme="dark"] .sara-chat-input-box {
+  background-color: rgba(28, 29, 34, 0.94) !important;
+  border-color: rgba(255, 255, 255, 0.07) !important;
+}
+
+html[data-theme="dark"] .sara-chat-input-box:focus-within {
+  background-color: rgba(32, 33, 39, 0.98) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+html[data-theme="dark"] .sara-zoom-viewport {
+  background-color: #101014 !important;
+}
+
+.sara-studio-canvas,
+html[data-theme="dark"] .sara-studio-canvas,
+html[data-theme="ivory"] .sara-studio-canvas {
+  background: radial-gradient(circle at 50% 45%, #ffffff 0%, #f8fafc 100%) !important;
+}
+
+/* 9. Semantic Status Badges & Accent Surfaces (Amber, Emerald, Sky, Rose, Indigo, Purple) */
+/* Amber */
+html[data-theme="dark"] .bg-amber-50,
+html[data-theme="dark"] .bg-amber-50\/80,
+html[data-theme="dark"] .bg-amber-50\/70,
+html[data-theme="dark"] .bg-amber-50\/50,
+html[data-theme="dark"] .bg-amber-50\/40,
+html[data-theme="dark"] .bg-amber-100,
+html[data-theme="dark"] .hover\:bg-amber-100:hover,
+html[data-theme="dark"] .hover\:bg-amber-50\/40:hover {
+  background-color: rgba(245, 158, 11, 0.14) !important;
+}
+html[data-theme="dark"] .text-amber-700,
+html[data-theme="dark"] .text-amber-800,
+html[data-theme="dark"] .text-amber-900,
+html[data-theme="dark"] .text-amber-950,
+html[data-theme="dark"] .hover\:text-amber-900:hover,
+html[data-theme="dark"] .group:hover .group-hover\:text-amber-800 {
+  color: #fcd34d !important;
+}
+html[data-theme="dark"] .border-amber-200,
+html[data-theme="dark"] .border-amber-200\/80,
+html[data-theme="dark"] .border-amber-200\/70,
+html[data-theme="dark"] .border-amber-200\/60,
+html[data-theme="dark"] .border-amber-300 {
+  border-color: rgba(245, 158, 11, 0.35) !important;
+}
+
+/* Emerald */
+html[data-theme="dark"] .bg-emerald-50,
+html[data-theme="dark"] .bg-emerald-50\/40,
+html[data-theme="dark"] .bg-emerald-50\/30,
+html[data-theme="dark"] .bg-emerald-100,
+html[data-theme="dark"] .hover\:bg-emerald-100:hover {
+  background-color: rgba(16, 185, 129, 0.14) !important;
+}
+html[data-theme="dark"] .text-emerald-700,
+html[data-theme="dark"] .text-emerald-800,
+html[data-theme="dark"] .text-emerald-900 {
+  color: #6ee7b7 !important;
+}
+html[data-theme="dark"] .border-emerald-100,
+html[data-theme="dark"] .border-emerald-200,
+html[data-theme="dark"] .border-emerald-200\/60 {
+  border-color: rgba(16, 185, 129, 0.35) !important;
+}
+
+/* Sky */
+html[data-theme="dark"] .bg-sky-50,
+html[data-theme="dark"] .bg-sky-100 {
+  background-color: rgba(14, 165, 233, 0.14) !important;
+}
+html[data-theme="dark"] .text-sky-700,
+html[data-theme="dark"] .text-sky-800,
+html[data-theme="dark"] .text-sky-900 {
+  color: #7dd3fc !important;
+}
+html[data-theme="dark"] .border-sky-200 {
+  border-color: rgba(14, 165, 233, 0.35) !important;
+}
+
+/* Rose */
+html[data-theme="dark"] .bg-rose-50,
+html[data-theme="dark"] .bg-rose-100 {
+  background-color: rgba(244, 63, 94, 0.14) !important;
+}
+html[data-theme="dark"] .text-rose-700,
+html[data-theme="dark"] .text-rose-800,
+html[data-theme="dark"] .text-rose-900 {
+  color: #fda4af !important;
+}
+html[data-theme="dark"] .border-rose-200 {
+  border-color: rgba(244, 63, 94, 0.35) !important;
+}
+
+/* Indigo */
+html[data-theme="dark"] .bg-indigo-50,
+html[data-theme="dark"] .bg-indigo-100 {
+  background-color: rgba(99, 102, 241, 0.15) !important;
+}
+html[data-theme="dark"] .text-indigo-700,
+html[data-theme="dark"] .text-indigo-800,
+html[data-theme="dark"] .text-indigo-900 {
+  color: #a5b4fc !important;
+}
+html[data-theme="dark"] .border-indigo-200 {
+  border-color: rgba(99, 102, 241, 0.35) !important;
+}
+
+/* Purple */
+html[data-theme="dark"] .bg-purple-50,
+html[data-theme="dark"] .bg-purple-100 {
+  background-color: rgba(168, 85, 247, 0.15) !important;
+}
+html[data-theme="dark"] .text-purple-700,
+html[data-theme="dark"] .text-purple-800,
+html[data-theme="dark"] .text-purple-900 {
+  color: #d8b4fe !important;
+}
+html[data-theme="dark"] .border-purple-200 {
+  border-color: rgba(168, 85, 247, 0.35) !important;
+}
+
+/* Font Size Scaling (Real-time prose & table scaling across all messages) */
+html[data-font-size="compact"] .sara-prose-text,
+html[data-font-size="compact"] .sara-chat-stream table td,
+html[data-font-size="compact"] .sara-chat-stream table th {
+  font-size: 0.875rem !important;
+  line-height: 1.62 !important;
+}
+html[data-font-size="standard"] .sara-prose-text {
+  font-size: 0.9375rem !important;
+  line-height: 1.68 !important;
+}
+html[data-font-size="large"] .sara-prose-text,
+html[data-font-size="large"] .sara-chat-stream table td {
+  font-size: 1.025rem !important;
+  line-height: 1.74 !important;
+}
+
+/* Custom Sleek Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.4);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(241, 245, 249, 0.8) 0%, rgba(254, 243, 199, 0.8) 50%, rgba(241, 245, 249, 0.8) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* iPhone Siri Orb Multi-Layer Fluid Rotation Animations */
+@keyframes siriOrbSpinCW {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.14);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes siriOrbSpinCCW {
+  0% {
+    transform: rotate(360deg) scale(1.08);
+  }
+  50% {
+    transform: rotate(180deg) scale(0.92);
+  }
+  100% {
+    transform: rotate(0deg) scale(1.08);
+  }
+}
+
+@keyframes siriOrbWaveMorph {
+  0% {
+    transform: rotate(0deg) scaleX(1.08) scaleY(0.86);
+  }
+  50% {
+    transform: rotate(180deg) scaleX(0.86) scaleY(1.15);
+  }
+  100% {
+    transform: rotate(360deg) scaleX(1.08) scaleY(0.86);
+  }
+}
+
+@keyframes siriCorePulse {
+  0%,
+  100% {
+    transform: scale(0.85);
+    opacity: 0.82;
+  }
+  50% {
+    transform: scale(1.22);
+    opacity: 1;
+  }
+}
+
+.siri-spin-cw {
+  animation: siriOrbSpinCW 2.1s linear infinite;
+}
+
+.siri-spin-ccw {
+  animation: siriOrbSpinCCW 2.7s linear infinite;
+}
+
+.siri-wave-morph {
+  animation: siriOrbWaveMorph 1.85s linear infinite;
+}
+
+.siri-core-pulse {
+  animation: siriCorePulse 1.4s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   Interactive Dealership Map (Leaflet + Google HD Tiles) Custom Styles
+   ========================================================================== */
+.sara-leaflet-map {
+  font-family: var(--font-sans);
+  z-index: 1;
+}
+
+.sara-leaflet-map .leaflet-pane,
+.sara-leaflet-map .leaflet-top,
+.sara-leaflet-map .leaflet-bottom {
+  z-index: 10 !important;
+}
+
+.sara-leaflet-map .leaflet-control-attribution {
+  display: none !important;
+}
+
+.sara-map-pin-icon {
+  background: transparent !important;
+  border: none !important;
+}
+
+@keyframes saraMapPinRipple {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.75;
+  }
+  70% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.1);
+    opacity: 0;
+  }
+}
+
+.sara-map-pin-pulse {
+  animation: saraMapPinRipple 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.sara-map-floating-surface {
+  background-color: rgba(255, 255, 255, 0.92) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.9) !important;
+  color: #0f172a !important;
+  box-shadow: 0 4px 16px -2px rgba(15, 23, 42, 0.14), 0 2px 6px -1px rgba(15, 23, 42, 0.08);
+}
+
+html[data-theme="dark"] .sara-map-floating-surface {
+  background-color: rgba(15, 23, 42, 0.92) !important;
+  border: 1px solid rgba(51, 65, 85, 0.85) !important;
+  color: #f8fafc !important;
+  box-shadow: 0 6px 20px -2px rgba(0, 0, 0, 0.55);
+}
+
+/* ==========================================================================
+   Global Print Stylesheet (@media print)
+   ========================================================================== */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 12mm;
+  }
+
+  html,
+  body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .sara-input-dock-gradient,
+  form {
+    display: none !important;
+  }
+
+  .sara-assistant-bubble {
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    page-break-inside: avoid;
+  }
+
+  table,
+  tr {
+    page-break-inside: avoid;
+  }
+}
+
+
+
