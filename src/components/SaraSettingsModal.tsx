@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { X, LogOut, RotateCcw } from "lucide-react";
+import { X, LogOut, RotateCcw, Download, Check } from "lucide-react";
 import {
   Department,
   AuthUser,
@@ -63,6 +63,9 @@ interface SaraSettingsModalProps {
   userAvatarUrl?: string;
   onExportTranscript?: () => void;
   onClearChat?: () => void;
+  canInstallPwa?: boolean;
+  isPwaInstalled?: boolean;
+  onInstallPwa?: () => void;
 }
 
 export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
@@ -74,6 +77,8 @@ export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
   currentUser,
   onSignOut,
   userAvatarUrl,
+  isPwaInstalled,
+  onInstallPwa,
 }) => {
   const [activeTab, setActiveTab] = useState<"general" | "permissions">(
     "general"
@@ -587,6 +592,52 @@ export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
                 </div>
               );
             })}
+
+            {/* Progressive Web App (PWA) Installation Row */}
+            <div className="py-3.5 flex items-center justify-between gap-4">
+              <div className="min-w-0 pr-2">
+                <div className="text-[13.5px] font-medium">
+                  Install app (PWA)
+                </div>
+                <div
+                  className={`text-[11.5px] mt-0.5 leading-snug ${
+                    isDark ? "text-[#8e8ea0]" : "text-zinc-500"
+                  }`}
+                >
+                  {isPwaInstalled
+                    ? "SARA is installed and running as a standalone app"
+                    : "Install GT Assistant SARA on your desktop or mobile home screen"}
+                </div>
+              </div>
+
+              {isPwaInstalled ? (
+                <span
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-medium shrink-0 select-none ${
+                    isDark
+                      ? "bg-[#1e2029]/60 text-[#8e8ea0] ring-1 ring-white/[0.06]"
+                      : isIvory
+                        ? "bg-[#f3ede1]/70 text-[#78716c]"
+                        : "bg-zinc-100 text-zinc-500"
+                  }`}
+                >
+                  <Check className="w-3.5 h-3.5 stroke-[2]" />
+                  <span>Installed</span>
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  onClick={onInstallPwa}
+                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-medium transition-all duration-150 cursor-pointer shrink-0 focus:outline-none ${
+                    isDark
+                      ? "bg-[#f4f4f5] hover:bg-white text-[#090a0d] shadow-xs"
+                      : "bg-zinc-900 hover:bg-zinc-800 text-white shadow-xs"
+                  }`}
+                >
+                  <Download className="w-3.5 h-3.5 stroke-[1.75]" />
+                  <span>Install app</span>
+                </button>
+              )}
+            </div>
 
             {/* Reset Preferences Row */}
             <div className="py-3.5 flex items-center justify-between gap-4">

@@ -44,6 +44,59 @@ I can help you check on customer orders, track shipments, look up dealership acc
   const [activeEmailDraft, setActiveEmailDraft] = useState<EmailDraftData | null>(null);
   const [activeEmailMsgId, setActiveEmailMsgId] = useState<string | null>(null);
 
+  // PWA Service Worker & Install Prompt State
+  const [deferredPwaPrompt, setDeferredPwaPrompt] = useState<any>(null);
+  const [isPwaInstalled, setIsPwaInstalled] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+
+    const checkStandalone = () => {
+      const standalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        (window.navigator as any).standalone === true;
+      setIsPwaInstalled(Boolean(standalone));
+    };
+    checkStandalone();
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPwaPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsPwaInstalled(true);
+      setDeferredPwaPrompt(null);
+      showToast("GT Assistant SARA installed");
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
+  const handleInstallPwa = async () => {
+    if (deferredPwaPrompt && typeof deferredPwaPrompt.prompt === "function") {
+      try {
+        await deferredPwaPrompt.prompt();
+        const choice = await deferredPwaPrompt.userChoice;
+        if (choice?.outcome === "accepted") {
+          setIsPwaInstalled(true);
+          setDeferredPwaPrompt(null);
+        }
+      } catch {}
+      return;
+    }
+    showToast("Use your browser menu → 'Install app' or 'Add to Home Screen'");
+  };
+
   // Load saved settings & authenticated user from localStorage on mount
   useEffect(() => {
     try {
@@ -408,32 +461,74 @@ I can help you check on customer orders, track shipments, look up dealership acc
   return (
     <ProductZoomProvider>
       <div className="sara-app-canvas relative flex h-[100dvh] min-h-[100dvh] w-full max-w-full overflow-hidden flex-col bg-[#fcfcfd] dark:bg-[#0a0a0c] text-slate-900 dark:text-slate-100 font-sans transition-colors duration-200">
-        {/* Top Action Bar — Only visible when a conversation is active */}
-        {hasConversation && (
-          <header className="flex h-13 sm:h-14 items-center justify-end bg-transparent px-4 sm:px-6 shrink-0 z-20 w-full [scrollbar-gutter:stable]">
-            <div className="max-w-3xl w-full mx-auto flex items-center justify-end gap-1.5 sm:gap-2">
-              <button
-                type="button"
-                onClick={handleExportTranscript}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/90 dark:hover:bg-white/[0.06] transition-all cursor-pointer"
-                title="Copy entire chat transcript"
-              >
-                <Download className="w-3.5 h-3.5 shrink-0 stroke-[1.75]" />
-                <span className="hidden sm:inline">Export</span>
-              </button>
+        {/* Top Bar — Always visible on mobile/tablet (<1280px) to house Profile & Settings without overlapping chat; visible on desktop when a conversation is active */}
+        <header
+          className={`${
+            hasConversation ? "flex" : "flex xl:hidden"
+          } h-13 sm:h-14 items-center justify-between bg-transparent px-3.5 sm:px-6 shrink-0 z-20 w-full [scrollbar-gutter:stable]`}
+        >
+          <div className="max-w-3xl w-full mx-auto flex items-center justify-between gap-2">
+            {/* Mobile & Tablet Profile + Settings Pill (< 1280px) */}
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              className="xl:hidden group flex items-center gap-2.5 px-2.5 py-1.5 rounded-full bg-white/80 dark:bg-[#14151a]/90 ring-1 ring-slate-900/[0.07] dark:ring-white/[0.08] hover:bg-slate-100/90 dark:hover:bg-[#1c1d24] text-slate-900 dark:text-[#f4f4f5] focus:outline-none transition-colors cursor-pointer select-none min-w-0 max-w-[210px] sm:max-w-[240px]"
+              title="Open Settings & Account (Ctrl+,)"
+            >
+              <div className="h-6 w-6 rounded-full overflow-hidden bg-[#cbd5e1] dark:bg-[#272830] shrink-0 flex items-center justify-center">
+                {!avatarLoadError ? (
+                  <img
+                    key={userAvatarUrl}
+                    src={userAvatarUrl}
+                    alt={currentUser?.fullName || "Saad Hassan"}
+                    onError={() => setAvatarLoadError(true)}
+                    className="h-full w-full object-cover rounded-full"
+                  />
+                ) : (
+                  <span className="text-[10px] font-semibold text-slate-700 dark:text-[#e4e4e7]">
+                    {(currentUser?.fullName || "SH")
+                      .split(/\s+/)
+                      .map((w) => w[0])
+                      .slice(0, 2)
+                      .join("")
+                      .toUpperCase()}
+                  </span>
+                )}
+              </div>
+              <span className="text-[12.5px] font-medium tracking-[-0.01em] text-slate-800 dark:text-[#e4e4e7] truncate">
+                {currentUser?.fullName || "Saad Hassan"}
+              </span>
+              <Settings className="w-3.5 h-3.5 shrink-0 text-slate-500 dark:text-[#a1a1aa] stroke-[1.75]" />
+            </button>
 
-              <button
-                type="button"
-                onClick={handleNewChat}
-                className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full ring-1 ring-slate-900/[0.07] dark:ring-white/[0.08] bg-white dark:bg-[#18191e] text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#22232a] hover:text-slate-950 dark:hover:text-white shadow-2xs transition-all cursor-pointer"
-                title="Start new conversation (Ctrl+Shift+O)"
-              >
-                <Plus className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 shrink-0 stroke-[2]" />
-                <span>New Chat</span>
-              </button>
-            </div>
-          </header>
-        )}
+            <div className="hidden xl:block" />
+
+            {/* Right-side Conversation Actions */}
+            {hasConversation && (
+              <div className="flex items-center justify-end gap-1.5 sm:gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleExportTranscript}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/90 dark:hover:bg-white/[0.06] transition-all cursor-pointer"
+                  title="Copy entire chat transcript"
+                >
+                  <Download className="w-3.5 h-3.5 shrink-0 stroke-[1.75]" />
+                  <span className="hidden sm:inline">Export</span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={handleNewChat}
+                  className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full ring-1 ring-slate-900/[0.07] dark:ring-white/[0.08] bg-white dark:bg-[#18191e] text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-[#22232a] hover:text-slate-950 dark:hover:text-white shadow-2xs transition-all cursor-pointer"
+                  title="Start new conversation (Ctrl+Shift+O)"
+                >
+                  <Plus className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400 shrink-0 stroke-[2]" />
+                  <span>New Chat</span>
+                </button>
+              </div>
+            )}
+          </div>
+        </header>
 
         {/* Main Chat Canvas */}
         <main className="flex-1 overflow-hidden flex flex-col bg-transparent min-h-0 w-full max-w-full">
@@ -475,8 +570,8 @@ I can help you check on customer orders, track shipments, look up dealership acc
           )}
         </main>
 
-        {/* Bottom-Left User Profile + Settings Bar (Exact Layout from Reference) */}
-        <div className="fixed bottom-3.5 left-4 z-30">
+        {/* Bottom-Left User Profile + Settings Bar (Wide Desktop >=1280px only so it never overlaps mobile/tablet chat input) */}
+        <div className="hidden xl:block fixed bottom-3.5 left-4 z-30">
           <button
             type="button"
             onClick={() => setIsSettingsOpen(true)}
@@ -522,7 +617,7 @@ I can help you check on customer orders, track shipments, look up dealership acc
           onDraftUpdated={handleDraftUpdated}
         />
 
-        {/* SARA Settings Modal (Includes Log Out) */}
+        {/* SARA Settings Modal (Includes Log Out & PWA Installation) */}
         <SaraSettingsModal
           isOpen={isSettingsOpen}
           onClose={() => setIsSettingsOpen(false)}
@@ -534,6 +629,9 @@ I can help you check on customer orders, track shipments, look up dealership acc
           userAvatarUrl={userAvatarUrl}
           onExportTranscript={handleExportTranscript}
           onClearChat={handleNewChat}
+          canInstallPwa={Boolean(deferredPwaPrompt)}
+          isPwaInstalled={isPwaInstalled}
+          onInstallPwa={handleInstallPwa}
         />
 
         {/* Floating Toast Feedback */}

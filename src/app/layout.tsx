@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -12,9 +12,30 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#090a0d" },
+  ],
+};
+
 export const metadata: Metadata = {
-  title: "SARA • GoldTouch Dealer Supply AI Assistant",
+  title: "SARA — GoldTouch Dealer Supply AI Assistant",
   description: "Smart Autonomous Real-time Assistant for GoldTouch Dealer Supply. Live queries across Customer Orders, Invoices, Dealership Rooftops, Purchasing, Fulfillments, and Supply Catalog.",
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "SARA",
+  },
+  icons: {
+    icon: "/logo.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({
