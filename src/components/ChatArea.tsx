@@ -651,7 +651,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           {/* Multi-Layered Atmospheric Warm Orange Glow Behind Center Hero */}
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-visible z-0 select-none"
+            className="pointer-events-none absolute inset-0 flex items-center justify-center overflow-hidden z-0 select-none"
           >
             <div
               style={{
@@ -660,7 +660,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                 filter: "blur(68px)",
                 transform: "translateZ(0)",
               }}
-              className="w-[620px] sm:w-[820px] h-[440px] sm:h-[560px] rounded-full translate-x-4 -translate-y-2 opacity-60 dark:opacity-100"
+              className="w-full max-w-[620px] sm:max-w-[820px] h-[360px] sm:h-[560px] rounded-full sm:translate-x-4 -translate-y-2 opacity-60 dark:opacity-100"
             />
             <div
               style={{
@@ -669,7 +669,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                 filter: "blur(48px)",
                 transform: "translateZ(0)",
               }}
-              className="absolute w-[360px] sm:w-[500px] h-[280px] sm:h-[380px] rounded-full translate-x-6 -translate-y-3 opacity-60 dark:opacity-100"
+              className="absolute w-[85%] max-w-[360px] sm:max-w-[500px] h-[260px] sm:h-[380px] rounded-full sm:translate-x-6 -translate-y-3 opacity-60 dark:opacity-100"
             />
           </div>
 
@@ -726,7 +726,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                       key={item.label}
                       type="button"
                       onClick={() => onQuickQuery(item.query)}
-                      className="group flex items-center gap-2.5 text-left text-[13px] leading-[20px] font-normal text-slate-600 dark:text-[#a1a1aa] hover:text-slate-950 dark:hover:text-white focus:outline-none transition-colors duration-150 cursor-pointer py-0.5"
+                      className="group flex items-center gap-2.5 text-left text-[13px] leading-[20px] font-normal text-slate-600 dark:text-[#a1a1aa] hover:text-slate-950 dark:hover:text-white focus:outline-none transition-colors duration-150 cursor-pointer py-0.5 w-full min-w-0"
                     >
                       <span className="flex h-5 w-5 shrink-0 items-center justify-center">
                         <ItemIcon className="w-4 h-4 text-slate-400 dark:text-[#8e8ea0] group-hover:text-slate-900 dark:group-hover:text-white shrink-0 stroke-[1.75] transition-colors" />

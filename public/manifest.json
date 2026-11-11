@@ -1,25 +1,39 @@
 {
+  "id": "/",
   "name": "GT Assistant SARA",
   "short_name": "SARA",
-  "description": "GoldTouch Dealer Supply — Enterprise ERP AI Assistant",
+  "description": "GoldTouch Dealer Supply — Enterprise Operations & Executive Intelligence Assistant",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "any",
+  "orientation": "portrait-primary",
   "background_color": "#090a0d",
   "theme_color": "#090a0d",
+  "categories": ["business", "productivity", "finance"],
   "icons": [
     {
-      "src": "/logo.png",
+      "src": "/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
-      "src": "/logo.png",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

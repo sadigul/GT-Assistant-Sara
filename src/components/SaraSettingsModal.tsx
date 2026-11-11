@@ -77,6 +77,7 @@ export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
   currentUser,
   onSignOut,
   userAvatarUrl,
+  canInstallPwa,
   isPwaInstalled,
   onInstallPwa,
 }) => {
@@ -84,6 +85,7 @@ export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
     "general"
   );
   const [avatarError, setAvatarError] = useState(false);
+  const [showPwaGuide, setShowPwaGuide] = useState(false);
   const [systemDark, setSystemDark] = useState<boolean>(() => {
     if (typeof window !== "undefined" && window.matchMedia) {
       return window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -594,48 +596,69 @@ export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
             })}
 
             {/* Progressive Web App (PWA) Installation Row */}
-            <div className="py-3.5 flex items-center justify-between gap-4">
-              <div className="min-w-0 pr-2">
-                <div className="text-[13.5px] font-medium">
-                  Install app (PWA)
+            <div className="py-3.5">
+              <div className="flex items-center justify-between gap-4">
+                <div className="min-w-0 pr-2">
+                  <div className="text-[13.5px] font-medium">
+                    Install app (PWA)
+                  </div>
+                  <div
+                    className={`text-[11.5px] mt-0.5 leading-snug ${
+                      isDark ? "text-[#8e8ea0]" : "text-zinc-500"
+                    }`}
+                  >
+                    {isPwaInstalled
+                      ? "SARA is installed and running as a standalone app"
+                      : "Install GT Assistant SARA on your desktop or mobile home screen"}
+                  </div>
                 </div>
-                <div
-                  className={`text-[11.5px] mt-0.5 leading-snug ${
-                    isDark ? "text-[#8e8ea0]" : "text-zinc-500"
-                  }`}
-                >
-                  {isPwaInstalled
-                    ? "SARA is installed and running as a standalone app"
-                    : "Install GT Assistant SARA on your desktop or mobile home screen"}
-                </div>
+
+                {isPwaInstalled ? (
+                  <span
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-medium shrink-0 select-none ${
+                      isDark
+                        ? "bg-[#1e2029]/60 text-[#8e8ea0] ring-1 ring-white/[0.06]"
+                        : isIvory
+                          ? "bg-[#f3ede1]/70 text-[#78716c]"
+                          : "bg-zinc-100 text-zinc-500"
+                    }`}
+                  >
+                    <Check className="w-3.5 h-3.5 stroke-[2]" />
+                    <span>Installed</span>
+                  </span>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!canInstallPwa) {
+                        setShowPwaGuide((prev) => !prev);
+                      }
+                      onInstallPwa?.();
+                    }}
+                    className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-medium transition-all duration-150 cursor-pointer shrink-0 focus:outline-none ${
+                      isDark
+                        ? "bg-[#f4f4f5] hover:bg-white text-[#090a0d] shadow-xs"
+                        : "bg-zinc-900 hover:bg-zinc-800 text-white shadow-xs"
+                    }`}
+                  >
+                    <Download className="w-3.5 h-3.5 stroke-[1.75]" />
+                    <span>Install app</span>
+                  </button>
+                )}
               </div>
 
-              {isPwaInstalled ? (
-                <span
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-medium shrink-0 select-none ${
+              {showPwaGuide && !isPwaInstalled && !canInstallPwa && (
+                <div
+                  className={`mt-2.5 px-3.5 py-2.5 rounded-xl text-[11.5px] leading-relaxed ${
                     isDark
-                      ? "bg-[#1e2029]/60 text-[#8e8ea0] ring-1 ring-white/[0.06]"
+                      ? "bg-[#0d0e12] text-[#a1a1aa] ring-1 ring-white/[0.06]"
                       : isIvory
-                        ? "bg-[#f3ede1]/70 text-[#78716c]"
-                        : "bg-zinc-100 text-zinc-500"
+                        ? "bg-[#f3ede1] text-[#57534e]"
+                        : "bg-zinc-100/80 text-zinc-600"
                   }`}
                 >
-                  <Check className="w-3.5 h-3.5 stroke-[2]" />
-                  <span>Installed</span>
-                </span>
-              ) : (
-                <button
-                  type="button"
-                  onClick={onInstallPwa}
-                  className={`inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-[12px] font-medium transition-all duration-150 cursor-pointer shrink-0 focus:outline-none ${
-                    isDark
-                      ? "bg-[#f4f4f5] hover:bg-white text-[#090a0d] shadow-xs"
-                      : "bg-zinc-900 hover:bg-zinc-800 text-white shadow-xs"
-                  }`}
-                >
-                  <Download className="w-3.5 h-3.5 stroke-[1.75]" />
-                  <span>Install app</span>
-                </button>
+                  In Chrome or Edge, click the install icon in the right side of the address bar (or open the browser menu and select <span className="font-medium">Install app</span>). On iPhone or iPad Safari, tap <span className="font-medium">Share</span> and choose <span className="font-medium">Add to Home Screen</span>.
+                </div>
               )}
             </div>
 
@@ -792,7 +815,7 @@ export const SaraSettingsModal: React.FC<SaraSettingsModalProps> = ({
         {/* Sticky Bottom Account & Log Out Footer */}
         {currentUser && (
           <div
-            className={`px-5 sm:px-6 py-3.5 flex items-center justify-between gap-3 border-t shrink-0 ${
+            className={`px-5 sm:px-6 pt-3.5 pb-[max(0.875rem,env(safe-area-inset-bottom))] sm:pb-3.5 flex items-center justify-between gap-3 border-t shrink-0 ${
               isDark
                 ? "border-white/[0.06] bg-[#101116]"
                 : isIvory

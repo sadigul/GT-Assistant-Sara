@@ -636,9 +636,9 @@ I can help you check on customer orders, track shipments, look up dealership acc
 
         {/* Floating Toast Feedback */}
         {toastMessage && (
-          <div className="fixed bottom-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-50 flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs font-medium animate-in fade-in slide-in-from-bottom-2 duration-200 whitespace-nowrap">
-            <Check className="w-4 h-4 text-emerald-400" />
-            <span>{toastMessage}</span>
+          <div className="fixed bottom-20 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-[80] flex items-center gap-2 px-4 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-white text-xs font-medium animate-in fade-in slide-in-from-bottom-2 duration-200 max-w-[calc(100vw-2rem)] shadow-xl">
+            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span className="truncate">{toastMessage}</span>
           </div>
         )}
       </div>

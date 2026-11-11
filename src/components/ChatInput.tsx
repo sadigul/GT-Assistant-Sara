@@ -630,8 +630,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               attachment
                 ? "Add a question about this file..."
                 : sendOnEnter
-                ? "Type / for ERP commands, orders and more"
-                : "Type / for ERP commands (Ctrl+Enter)"
+                ? "Ask SARA or type / for commands"
+                : "Ask SARA or type / (Ctrl+Enter)"
             }
             className="flex-1 min-w-0 w-full h-full bg-transparent border-0 p-0 m-0 text-[16px] sm:text-[13.5px] leading-[48px] text-slate-900 dark:text-[#f4f4f5] placeholder-slate-400 dark:placeholder-[#8e8ea0] focus:outline-none"
           />

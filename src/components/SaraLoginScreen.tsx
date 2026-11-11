@@ -211,7 +211,6 @@ export default function SaraLoginScreen({
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="Enter your password"
-                  required
                   autoComplete="current-password"
                   enterKeyHint="done"
                   className="w-full h-11 pl-3.5 pr-10 rounded-xl bg-zinc-50/60 dark:bg-[#16171d] text-[16px] sm:text-[13.5px] text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 ring-1 ring-inset ring-zinc-200 dark:ring-white/[0.09] focus:bg-white dark:focus:bg-[#181920] focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white/35 focus:outline-none transition-all"
