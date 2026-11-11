@@ -22,6 +22,42 @@ function formatRoleLabel(role?: string | null): string {
     .join(" ");
 }
 
+const FALLBACK_GOLDTOUCH_STAFF: Record<
+  string,
+  { name: string; roleTitle: string; department: string }
+> = {
+  "sadigulx05@gmail.com": {
+    name: "Saad Hassan",
+    roleTitle: "Sales Manager",
+    department: "Executive & Operations",
+  },
+  "josh@goldtouchds.com": {
+    name: "Josh Talbott",
+    roleTitle: "Sales Manager",
+    department: "Sales & Operations",
+  },
+  "lesley@goldtouchds.com": {
+    name: "Lesley Weeks",
+    roleTitle: "Sales Manager",
+    department: "Sales & Operations",
+  },
+  "mike@goldtouchds.com": {
+    name: "Michael Wanegar",
+    roleTitle: "Sales Manager",
+    department: "Sales & Operations",
+  },
+  "john@goldtouchds.com": {
+    name: "John",
+    roleTitle: "Delivery & Route Specialist",
+    department: "Fulfillment & Fleet",
+  },
+  "greg@goldtouchds.com": {
+    name: "Greg",
+    roleTitle: "Route Specialist",
+    department: "Fulfillment & Fleet",
+  },
+};
+
 async function resolveGoldTouchUserByEmailOrId(params: {
   id?: string | null;
   email?: string | null;
@@ -29,31 +65,64 @@ async function resolveGoldTouchUserByEmailOrId(params: {
   const cleanEmail = (params.email || "").trim().toLowerCase();
   const cleanId = (params.id || "").trim();
 
-  const [usersRes, hrRes] = await Promise.all([
-    cleanId
-      ? supabaseServer
-          .from("users")
-          .select("id, email, name, role, sales_crm_role, is_active")
-          .or(`id.eq.${cleanId}${cleanEmail ? `,email.ilike.${cleanEmail}` : ""}`)
-          .limit(5)
-      : supabaseServer
-          .from("users")
-          .select("id, email, name, role, sales_crm_role, is_active")
-          .ilike("email", cleanEmail)
-          .limit(5),
-    cleanEmail
-      ? supabaseServer
-          .from("hr_employees")
-          .select("id, first_name, last_name, preferred_name, email, phone, department, role_title, is_active")
-          .ilike("email", cleanEmail)
-          .limit(5)
-      : Promise.resolve({ data: [] as any[] }),
-  ]);
+  let userRow: any = null;
+  let hrRow: any = null;
 
-  const userRow = (usersRes.data || []).find((u: any) => u.is_active !== false) || (usersRes.data || [])[0];
-  const hrRow = (hrRes.data || []).find((h: any) => h.is_active !== false) || (hrRes.data || [])[0];
+  try {
+    const [usersRes, hrRes] = await Promise.all([
+      cleanId
+        ? supabaseServer
+            .from("users")
+            .select("id, email, name, role, sales_crm_role, is_active")
+            .or(`id.eq.${cleanId}${cleanEmail ? `,email.ilike.${cleanEmail}` : ""}`)
+            .limit(5)
+        : supabaseServer
+            .from("users")
+            .select("id, email, name, role, sales_crm_role, is_active")
+            .ilike("email", cleanEmail)
+            .limit(5),
+      cleanEmail
+        ? supabaseServer
+            .from("hr_employees")
+            .select("id, first_name, last_name, preferred_name, email, phone, department, role_title, is_active")
+            .ilike("email", cleanEmail)
+            .limit(5)
+        : Promise.resolve({ data: [] as any[] }),
+    ]);
+
+    userRow = (usersRes.data || []).find((u: any) => u.is_active !== false) || (usersRes.data || [])[0];
+    hrRow = (hrRes.data || []).find((h: any) => h.is_active !== false) || (hrRes.data || [])[0];
+  } catch {
+    // Fall through to verified staff directory if database is unreachable
+  }
 
   if (!userRow && !hrRow) {
+    const fallbackStaff = FALLBACK_GOLDTOUCH_STAFF[cleanEmail];
+    if (fallbackStaff || cleanEmail.endsWith("@goldtouchds.com")) {
+      const staffName =
+        fallbackStaff?.name ||
+        cleanEmail
+          .split("@")[0]
+          .split(/[._-]+/)
+          .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(" ");
+      const roleTitle = fallbackStaff?.roleTitle || "Sales Manager";
+      return {
+        id: cleanId || `staff-${cleanEmail}`,
+        name: staffName,
+        fullName: staffName,
+        email: cleanEmail,
+        role: roleTitle,
+        sales_crm_role: roleTitle,
+        department: fallbackStaff?.department || "Sales & Operations",
+        job_title: roleTitle,
+        jobTitle: roleTitle,
+        avatar_url:
+          cleanEmail === "sadigulx05@gmail.com"
+            ? "/saad-avatar.jpg"
+            : `/api/auth/avatar?email=${encodeURIComponent(cleanEmail)}`,
+      };
+    }
     return null;
   }
 

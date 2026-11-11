@@ -633,7 +633,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 ? "Type / for ERP commands, orders and more"
                 : "Type / for ERP commands (Ctrl+Enter)"
             }
-            className="flex-1 min-w-0 w-full h-full bg-transparent border-0 p-0 m-0 text-[13.5px] leading-[48px] text-slate-900 dark:text-[#f4f4f5] placeholder-slate-400 dark:placeholder-[#8e8ea0] focus:outline-none"
+            className="flex-1 min-w-0 w-full h-full bg-transparent border-0 p-0 m-0 text-[16px] sm:text-[13.5px] leading-[48px] text-slate-900 dark:text-[#f4f4f5] placeholder-slate-400 dark:placeholder-[#8e8ea0] focus:outline-none"
           />
 
           {/* Right Side: SARA Mode Selector ("SARA Auto v") + Mic / Send Button */}
@@ -658,7 +658,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 <div
                   className={`absolute right-0 ${
                     isCentered ? "top-full mt-2" : "bottom-full mb-2"
-                  } w-72 rounded-2xl p-1.5 bg-white dark:bg-[#1c1d22] ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150`}
+                  } w-[260px] sm:w-72 max-w-[calc(100vw-2rem)] rounded-2xl p-1.5 bg-white dark:bg-[#1c1d22] ring-1 ring-slate-900/10 dark:ring-white/10 shadow-2xl z-40 animate-in fade-in zoom-in-95 duration-150`}
                 >
                   {modeOptions.map((opt) => {
                     const active = responseStyle === opt.id;

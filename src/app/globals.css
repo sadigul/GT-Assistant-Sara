@@ -53,32 +53,38 @@ select {
   font-family: "Google Sans", "Google Sans Text", var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-/* Prevent browser autofill from painting a mismatched blue box inside inputs */
-input:-webkit-autofill,
-input:-webkit-autofill:hover,
-input:-webkit-autofill:focus,
-input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+/* Customize autofill highlight with a non-color inset ring and theme-matched opaque fill */
+input:is(:autofill, :-webkit-autofill),
+input:is(:autofill, :-webkit-autofill):hover,
+input:is(:autofill, :-webkit-autofill):focus,
+input:is(:autofill, :-webkit-autofill):active {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(24, 24, 27, 0.22),
+    inset 0 0 0 100vmax #ffffff !important;
   -webkit-text-fill-color: #09090b !important;
   caret-color: #09090b !important;
   transition: background-color 9999s ease-in-out 0s;
 }
 
-html[data-theme="dark"] input:-webkit-autofill,
-html[data-theme="dark"] input:-webkit-autofill:hover,
-html[data-theme="dark"] input:-webkit-autofill:focus,
-html[data-theme="dark"] input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #18191f inset !important;
+html[data-theme="dark"] input:is(:autofill, :-webkit-autofill),
+html[data-theme="dark"] input:is(:autofill, :-webkit-autofill):hover,
+html[data-theme="dark"] input:is(:autofill, :-webkit-autofill):focus,
+html[data-theme="dark"] input:is(:autofill, :-webkit-autofill):active {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.16),
+    inset 0 0 0 100vmax #16171d !important;
   -webkit-text-fill-color: #f4f4f5 !important;
   caret-color: #f4f4f5 !important;
   transition: background-color 9999s ease-in-out 0s;
 }
 
-html[data-theme="ivory"] input:-webkit-autofill,
-html[data-theme="ivory"] input:-webkit-autofill:hover,
-html[data-theme="ivory"] input:-webkit-autofill:focus,
-html[data-theme="ivory"] input:-webkit-autofill:active {
-  -webkit-box-shadow: 0 0 0 1000px #fffdf8 inset !important;
+html[data-theme="ivory"] input:is(:autofill, :-webkit-autofill),
+html[data-theme="ivory"] input:is(:autofill, :-webkit-autofill):hover,
+html[data-theme="ivory"] input:is(:autofill, :-webkit-autofill):focus,
+html[data-theme="ivory"] input:is(:autofill, :-webkit-autofill):active {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(28, 25, 23, 0.2),
+    inset 0 0 0 100vmax #fffdf8 !important;
   -webkit-text-fill-color: #1c1917 !important;
   caret-color: #1c1917 !important;
   transition: background-color 9999s ease-in-out 0s;
